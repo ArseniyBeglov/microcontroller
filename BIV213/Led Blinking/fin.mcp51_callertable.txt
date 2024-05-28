@@ -1,0 +1,5 @@
+main
+	SPI_init
+	UART_init
+	connect
+	Uart_write_char
