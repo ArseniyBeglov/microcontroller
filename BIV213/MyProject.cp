@@ -1,5 +1,4 @@
-#line 1 "C:/Users/hp/Desktop/mk_hw/BIV213/MyProject.c"
-
+#line 1 "C:/Users/digod/Documents/microcontroller/BIV213/MyProject.c"
 
 
 
@@ -17,15 +16,29 @@ sbit flagB at flags.b1;
 sbit comFlag at flags.b2;
 sbit kbFlag at flags.b3;
 
-char cursorPos = 0;
+
+
 
 char a[] = {0b11111110, 0b11111101,0b11111011};
 char btns[] = {'1','2','3','4','5','6','7','8','9','*','0','#'};
+char digits[] = {'0','1','2','3','4','5','6','7','8','9'};
 char errorMsg[] = "Error, try again";
 char endMsg[] = "Timer ended";
 
+int number1 = 0;
+int number2 = 999;
+int timerStep = 1;
+int timerVal;
+char timerValRank;
+char num1Symb[4];
+char num2Symb[4];
+char timerStepSymb[5];
+char timerValSymb[4];
+int timer0Count=0;
+char THstart=0;
+char TLstart=0;
+
 void LCDsend4bit(char buf){
- Delay_ms(20);
  P2 = buf;
  if(comFlag == 1){
  LCD_RS = 0;
@@ -33,39 +46,39 @@ void LCDsend4bit(char buf){
  else{
  LCD_RS = 1;
  }
- Delay_ms(2);
  LCD_EN = 1;
- Delay_ms(2);
  LCD_EN = 0;
 }
 
 void LCDsend(char buf){
+ Delay_ms(1);
  LCDsend4bit(buf&0xf0);
  LCDsend4bit(buf<<4);
 }
 
-void LCDsendCom(char command){
+void LCDSendCom(char command){
  comFlag = 1;
  LCDsend(command);
 }
 
 void LCDclear()
 {
- cursorPos = 0;
- LCDsendCom( 0x01 );
+
+ LCDSendCom( 0x01 );
 }
 
 void LCDsendSymb(char symbol)
 {
- cursorPos++;
+#line 74 "C:/Users/digod/Documents/microcontroller/BIV213/MyProject.c"
  comFlag = 0;
  LCDsend(symbol);
 }
 
 void LCDstart(){
- LCDsendCom(0x28);
- LCDsendCom(0x0f);
- LCDsendCom( 0x80 );
+ LCDSendCom(0x02);
+ LCDSendCom(0x28);
+ LCDSendCom(0x0f);
+ LCDSendCom( 0x80 );
  LCDclear();
 }
 
@@ -76,9 +89,33 @@ void LCDsendData(char* symbols)
  {
  LCDsendSymb(*(symbols+iter));
  iter++;
- if(cursorPos==16)
- LCDsendCom( 0xC0 );
  }
+}
+
+void numToSymb(int number, char* symbols)
+{
+ char* iter = symbols;
+ char temp[4], temp1[5];
+ int value = number;
+ int rank = -1;
+ int digit = 0;
+ int i;
+ do{
+ digit = value % 10;
+ value /= 10;
+ rank++;
+ temp[rank] = digits[digit];
+
+ }while(value>0);
+
+ for(i = 0; rank >= 0; rank--, i++)
+ {
+ temp1[i] = temp[rank];
+ *iter = temp[rank];
+ iter++;
+ }
+ temp1[i] = 0;
+ *iter = 0;
 }
 
 void LCDsendMsg(char* msg)
@@ -87,54 +124,17 @@ void LCDsendMsg(char* msg)
  LCDsendData(msg);
 }
 
-void digToSymb(int value, char* symbols)
-{
- char temp[3];
- int rank = -1;
- int digit = 0;
- int i;
- do{
- digit = value % 10;
- value /= 10;
- rank++;
- temp[rank] = '0' + digit;
- }while(value>0);
-
- for(i = 0; rank >= 0; rank--, i++)
- {
- *(symbols+i) = temp[rank];
- }
- *(symbols+i) = 0;
-}
-
-void serialportInit()
-{
- SCON = 0b01010000;
- PCON = 0b10000000;
-}
-
-void timer1Init()
-{
- TR1_bit = 0;
- TH1 = 0xFD;
- TMOD = TMOD&0b00001111;
- TMOD = TMOD|0b00100000;
- TR1_bit = 1;
-}
-
 int insertNumber1()
 {
 int value1 = 0;
-char val[]={'0','0','0',0};
 char digitCount = 0;
 char i = 0;
 char btnNum = 0;
 cicleFlag = 1;
- do {
-
+do {
+ if(P0_7_bit && P0_6_bit && P0_5_bit && P0_4_bit){
  kbFlag = 0;
  do{
- Delay_ms(100);
  if(i==3)
  i = 0;
  P0 = a[i];
@@ -155,99 +155,165 @@ cicleFlag = 1;
  btnNum+=1;
  else if(!P0_2_bit)
  btnNum+=2;
- LCDsendSymb(btns[btnNum]);
 
  if(btnNum==9 && digitCount>1)
  {
  digitCount--;
  value1 = value1/10;
+ LCDclear();
+ numToSymb(value1, num1Symb);
+ LCDsendData(num1Symb);
  }
  else if(btnNum==11)
  {
- if(digitCount < 1)
+ if(digitCount < 1){
  LCDsendMsg(errorMsg);
+ }
  else
  cicleFlag = 0;
  }
  else
  {
  digitCount++;
- if(digitCount>3)
- {
+ if(digitCount>3){
  LCDsendMsg(errorMsg);
  digitCount = 0;
+ value1 = 0;
  }
- else
+ else{
  value1 = value1*10 + (btns[btnNum]-'0');
- digToSymb(value1, *val);
-
+ LCDclear();
+ numToSymb(value1, num1Symb);
+ LCDsendData(num1Symb);
  }
-
+ }
+ }
  } while(cicleFlag);
  LCDclear();
  P0 = 255;
  return value1;
 }
 
-
-
-
-
-int insertNumber2()
-{ timer1Init();
- serialportInit();
- while(1)
- {
- if(RI_bit)
- {
- RI_bit = 0;
- P3 = SBUF;
- if(TI_bit)
- {
- TI_bit = 0;
- SBUF = '0';
- }
- }
- if(UART1_Data_Ready())
- LCDsendData(UART1_Read());
- }
+void UART1start(){
+ TMOD = 0x20;
+ TH1 = 0xF5;
+ SCON = 0x50;
+ TR1_bit = 1;
 }
 
-int number1;
-int number2;
+char UART1read(){
+ return SBUF;
+}
 
-void send(unsigned char *s)
+int insertUART(char digCount)
 {
- while(*s){
- SBUF = *s++;
- while(TI_bit==0);
- TI_bit=0;
- }
+ char digitCount = 0;
+ char digit;
+ char uartRd;
+ int value=0;
+ Delay_ms(100);
 
+ while(1){
+ cicleFlag = 1;
+ LCDclear();
+ while (cicleFlag) {
+ if (RI_bit) {
+ uartRd = UART1read();
+ digit = uartRd - '0';
+ if(digit >=0 && digit <=9){
+ digitCount++;
+ LCDsendSymb(uartRd);
+ if(digitCount > digCount){
+ LCDsendMsg(ErrorMsg);
+ digitCount = 0;
+ }
+ value = value * 10 + digit;
+ }
+ else if(uartRd == ' '){
+
+ }
+ else {
+ LCDsendMsg(ErrorMsg);
+ }
+ RI_bit=0;
+ }
+ }
+ }
+ return value;
 }
 
+void LCDSendTimerStart(){
+ int temp = number1;
+ LCDclear();
+ LCDSendCom( 0x80 );
+ LCDSendData(num1Symb);
+ LCDSendSymb(' ');
+ LCDSendData(num2Symb);
+ LCDSendSymb(' ');
+ LCDSendData(timerStepSymb);
+ LCDSendCom( 0xC0 );
+ LCDSendData("   ");
+ LCDSendData(timerValSymb);
+ timerValRank = 0;
+ do{
+ temp = temp / 10;
+ timerValRank++;
+ }while(temp > 0);
+ LCDSendCom(0x0c);
+}
 
+void LCDSendTimerValue(int timerVal){
+ int i,temp,temp1;
+ temp = timerVal;
+ if((timerVal == 10 && timerValRank == 1) || (timerVal == 100 && timerValRank == 2)){
+ timerValRank++;
+ }
+ for(i=timerValRank;i>0;i--){
+ temp1 = temp % 10;
+ LCDSendCom(194+i);
+ LCDSendSymb(digits[temp1]);
+ if(temp1 != 0){
+ return;
+ }
+ temp = temp / 10;
+ }
+}
 
-char uart_rd;
+void timer0Init(){
+ long temp, temp1;
+ TMOD = TMOD | 0b00000001;
+ temp = timerStep * 1000L;
+ timer0Count = temp / 65536L;
+ temp1 = temp - 65536 * (long)timer0Count;
+ temp = 65535 - temp1;
+ THstart = temp / 256;
+ TLstart = temp % 256;
+}
+
+void timer0Step(){
+ int i;
+ TL0 = TLstart;
+ TH0 = THstart;
+ TR0_bit = 1;
+ for(i=0;i<timer0Count;i++){
+ while(!TF0_bit);
+ TF0_bit = 0;
+ }
+}
+
 void main() {
- P1=255;
-
- LCDsendCom(0x02);
- Delay_ms(20);
-
  LCDstart();
 
- LCDsendMsg("biba");
-
-
-
-
-
- UART1_Init(9600);
- Delay_ms(200);
-
- UART1_Write_Text("Start");
-
-
-
-}
+ UART1start();
+ timerVal = number1;
+ numToSymb(number1, num1Symb);
+ numToSymb(number2, num2Symb);
+ numToSymb(timerStep, timerStepSymb);
+ numToSymb(timerVal, timerValSymb);
+ LCDSendTimerStart();
+ timer0Init();
+ for(;timerVal<=number2;timerVal++){
+ LCDSendTimerValue(timerVal);
+ timer0Step();
+ }
+ }

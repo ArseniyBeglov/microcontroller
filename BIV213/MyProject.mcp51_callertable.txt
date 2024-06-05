@@ -1,28 +1,45 @@
 main
 	__CC2D
-	LCDsendCom
-		LCDsend
-			LCDsend4bit
 	LCDstart
-		LCDsendCom
+		LCDSendCom
 			LCDsend
 				LCDsend4bit
 		LCDclear
-			LCDsendCom
+			LCDSendCom
 				LCDsend
 					LCDsend4bit
-	LCDsendMsg
+	UART1start
+	numToSymb
+		Div_16x16_S
+			Div_16x16_U
+	LCDSendTimerStart
 		LCDclear
-			LCDsendCom
+			LCDSendCom
 				LCDsend
 					LCDsend4bit
+		LCDSendCom
+			LCDsend
+				LCDsend4bit
 		LCDsendData
 			LCDsendSymb
 				LCDsend
 					LCDsend4bit
-			LCDsendCom
-				LCDsend
-					LCDsend4bit
-	UART1_Init
-	UART1_Write_Text
-		UART1_Write
+		LCDsendSymb
+			LCDsend
+				LCDsend4bit
+		Div_16x16_S
+			Div_16x16_U
+	timer0Init
+		Mul_32x32
+		Div_32x32_S
+			Div_32x32_U
+	LCDSendTimerValue
+		Div_16x16_S
+			Div_16x16_U
+		LCDSendCom
+			LCDsend
+				LCDsend4bit
+		LCDsendSymb
+			LCDsend
+				LCDsend4bit
+	timer0Step
