@@ -31,16 +31,17 @@ Count=0
 [OTHER_FILES]
 Count=0
 [SEARCH_PATH]
-Count=9
+Count=10
 Path0=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for 8051\defs\
-Path1=C:\Users\digod\Documents\microcontroller\BIV213\
-Path2=C:\Users\hp\Desktop\mk_hw\BIV213\
-Path3=C:\Program Files (x86)\MikroElektronika\mikroC PRO for 8051\defs\
-Path4=C:\Users\Администратор\Desktop\BIV213\
-Path5=C:\Users\digod\Desktop\BIV213\
-Path6=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for 8051\Uses\ATMEL\
-Path7=C:\BIV213\
-Path8=C:\Program Files (x86)\MikroElektronika\mikroC PRO for 8051\Uses\ATMEL\
+Path1=C:\Users\hp\Desktop\microcontroller\BIV213\
+Path2=C:\Users\digod\Documents\microcontroller\BIV213\
+Path3=C:\Users\hp\Desktop\mk_hw\BIV213\
+Path4=C:\Program Files (x86)\MikroElektronika\mikroC PRO for 8051\defs\
+Path5=C:\Users\Администратор\Desktop\BIV213\
+Path6=C:\Users\digod\Desktop\BIV213\
+Path7=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for 8051\Uses\ATMEL\
+Path8=C:\BIV213\
+Path9=C:\Program Files (x86)\MikroElektronika\mikroC PRO for 8051\Uses\ATMEL\
 [HEADER_PATH]
 Count=0
 [HEADERS]

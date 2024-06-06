@@ -41,12 +41,12 @@ _LCDsend:
 	MOV R0, #4
 	MOV A, FARG_LCDsend_buf+0
 	INC R0
-	SJMP L__LCDsend83
-L__LCDsend84:
+	SJMP L__LCDsend80
+L__LCDsend81:
 	CLR C
 	RLC A
-L__LCDsend83:
-	DJNZ R0, L__LCDsend84
+L__LCDsend80:
+	DJNZ R0, L__LCDsend81
 	MOV FARG_LCDsend4bit_buf+0, A
 	LCALL _LCDsend4bit+0
 ;MyProject.c,56 :: 		}
@@ -300,7 +300,7 @@ L_insertNumber110:
 	JB P0_4_bit+0, #3
 	NOP
 	LJMP L_insertNumber115
-L__insertNumber178:
+L__insertNumber175:
 ;MyProject.c,137 :: 		kbFlag = 0;
 	CLR C
 	MOV A, _flags+0
@@ -323,16 +323,16 @@ L_insertNumber119:
 ;MyProject.c,142 :: 		i++;
 	INC insertNumber1_i_L0+0
 ;MyProject.c,143 :: 		if(!P0_7_bit || !P0_6_bit || !P0_5_bit || !P0_4_bit)
-	JNB P0_7_bit+0, L__insertNumber177
+	JNB P0_7_bit+0, L__insertNumber174
 	NOP
-	JNB P0_6_bit+0, L__insertNumber177
+	JNB P0_6_bit+0, L__insertNumber174
 	NOP
-	JNB P0_5_bit+0, L__insertNumber177
+	JNB P0_5_bit+0, L__insertNumber174
 	NOP
-	JNB P0_4_bit+0, L__insertNumber177
+	JNB P0_4_bit+0, L__insertNumber174
 	NOP
 	SJMP L_insertNumber122
-L__insertNumber177:
+L__insertNumber174:
 ;MyProject.c,144 :: 		kbFlag = 1;
 	SETB C
 	MOV A, _flags+0
@@ -399,7 +399,7 @@ L_insertNumber130:
 	MOV A, insertNumber1_digitCount_L0+0
 	SUBB A, #1
 	JC L_insertNumber134
-L__insertNumber176:
+L__insertNumber173:
 ;MyProject.c,162 :: 		digitCount--;
 	DEC insertNumber1_digitCount_L0+0
 ;MyProject.c,163 :: 		value1 = value1/10;
@@ -594,7 +594,7 @@ L_insertUART44:
 	MOV A, insertUART_digit_L0+0
 	SUBB A, #9
 	JNC L_insertUART49
-L__insertUART79:
+L__insertUART76:
 ;MyProject.c,225 :: 		digitCount++;
 	INC insertUART_digitCount_L0+0
 ;MyProject.c,226 :: 		LCDsendSymb(uartRd);
@@ -727,30 +727,30 @@ _LCDSendTimerValue:
 ;MyProject.c,269 :: 		if((timerVal == 10 && timerValRank == 1) || (timerVal == 100 && timerValRank == 2)){
 	MOV A, #10
 	XRL A, FARG_LCDSendTimerValue_timerVal+0
-	JNZ L__LCDSendTimerValue85
+	JNZ L__LCDSendTimerValue82
 	MOV A, #0
 	XRL A, FARG_LCDSendTimerValue_timerVal+1
-L__LCDSendTimerValue85:
-	JNZ L__LCDSendTimerValue82
+L__LCDSendTimerValue82:
+	JNZ L__LCDSendTimerValue79
 	MOV A, _timerValRank+0
 	XRL A, #1
-	JNZ L__LCDSendTimerValue82
-	SJMP L__LCDSendTimerValue80
-L__LCDSendTimerValue82:
+	JNZ L__LCDSendTimerValue79
+	SJMP L__LCDSendTimerValue77
+L__LCDSendTimerValue79:
 	MOV A, #100
 	XRL A, FARG_LCDSendTimerValue_timerVal+0
-	JNZ L__LCDSendTimerValue86
+	JNZ L__LCDSendTimerValue83
 	MOV A, #0
 	XRL A, FARG_LCDSendTimerValue_timerVal+1
-L__LCDSendTimerValue86:
-	JNZ L__LCDSendTimerValue81
+L__LCDSendTimerValue83:
+	JNZ L__LCDSendTimerValue78
 	MOV A, _timerValRank+0
 	XRL A, #2
-	JNZ L__LCDSendTimerValue81
-	SJMP L__LCDSendTimerValue80
-L__LCDSendTimerValue81:
+	JNZ L__LCDSendTimerValue78
+	SJMP L__LCDSendTimerValue77
+L__LCDSendTimerValue78:
 	SJMP L_LCDSendTimerValue63
-L__LCDSendTimerValue80:
+L__LCDSendTimerValue77:
 ;MyProject.c,270 :: 		timerValRank++;
 	INC _timerValRank+0
 ;MyProject.c,271 :: 		}
@@ -977,61 +977,11 @@ _main:
 	LCALL _LCDstart+0
 ;MyProject.c,308 :: 		UART1start();
 	LCALL _UART1start+0
-;MyProject.c,309 :: 		timerVal = number1;
-	MOV _timerVal+0, _number1+0
-	MOV _timerVal+1, _number1+1
-;MyProject.c,310 :: 		numToSymb(number1, num1Symb);
-	MOV FARG_numToSymb_number+0, _number1+0
-	MOV FARG_numToSymb_number+1, _number1+1
-	MOV FARG_numToSymb_symbols+0, #_num1Symb+0
-	LCALL _numToSymb+0
-;MyProject.c,311 :: 		numToSymb(number2, num2Symb);
-	MOV FARG_numToSymb_number+0, _number2+0
-	MOV FARG_numToSymb_number+1, _number2+1
-	MOV FARG_numToSymb_symbols+0, #_num2Symb+0
-	LCALL _numToSymb+0
-;MyProject.c,312 :: 		numToSymb(timerStep, timerStepSymb);
-	MOV FARG_numToSymb_number+0, _timerStep+0
-	MOV FARG_numToSymb_number+1, _timerStep+1
-	MOV FARG_numToSymb_symbols+0, #_timerStepSymb+0
-	LCALL _numToSymb+0
-;MyProject.c,313 :: 		numToSymb(timerVal, timerValSymb);
-	MOV FARG_numToSymb_number+0, _timerVal+0
-	MOV FARG_numToSymb_number+1, _timerVal+1
-	MOV FARG_numToSymb_symbols+0, #_timerValSymb+0
-	LCALL _numToSymb+0
-;MyProject.c,314 :: 		LCDSendTimerStart();
-	LCALL _LCDSendTimerStart+0
-;MyProject.c,315 :: 		timer0Init();
-	LCALL _timer0Init+0
-;MyProject.c,316 :: 		for(;timerVal<=number2;timerVal++){
-L_main73:
-	SETB C
-	MOV A, _timerVal+0
-	SUBB A, _number2+0
-	MOV A, _number2+1
-	XRL A, #128
-	MOV R0, A
-	MOV A, _timerVal+1
-	XRL A, #128
-	SUBB A, R0
-	JNC L_main74
-;MyProject.c,317 :: 		LCDSendTimerValue(timerVal);
-	MOV FARG_LCDSendTimerValue_timerVal+0, _timerVal+0
-	MOV FARG_LCDSendTimerValue_timerVal+1, _timerVal+1
-	LCALL _LCDSendTimerValue+0
-;MyProject.c,318 :: 		timer0Step();
-	LCALL _timer0Step+0
-;MyProject.c,316 :: 		for(;timerVal<=number2;timerVal++){
-	MOV A, #1
-	ADD A, _timerVal+0
-	MOV _timerVal+0, A
-	MOV A, #0
-	ADDC A, _timerVal+1
-	MOV _timerVal+1, A
-;MyProject.c,319 :: 		}
-	SJMP L_main73
-L_main74:
-;MyProject.c,320 :: 		}
+;MyProject.c,309 :: 		number2 = insertUART(3);
+	MOV FARG_insertUART_digCount+0, #3
+	LCALL _insertUART+0
+	MOV _number2+0, 0
+	MOV _number2+1, 1
+;MyProject.c,310 :: 		}
 	SJMP #254
 ; end of _main

@@ -9,37 +9,22 @@ main
 				LCDsend
 					LCDsend4bit
 	UART1start
-	numToSymb
-		Div_16x16_S
-			Div_16x16_U
-	LCDSendTimerStart
+	insertUART
 		LCDclear
 			LCDSendCom
 				LCDsend
 					LCDsend4bit
-		LCDSendCom
-			LCDsend
-				LCDsend4bit
-		LCDsendData
-			LCDsendSymb
-				LCDsend
-					LCDsend4bit
+		UART1read
 		LCDsendSymb
 			LCDsend
 				LCDsend4bit
-		Div_16x16_S
-			Div_16x16_U
-	timer0Init
-		Mul_32x32
-		Div_32x32_S
-			Div_32x32_U
-	LCDSendTimerValue
-		Div_16x16_S
-			Div_16x16_U
-		LCDSendCom
-			LCDsend
-				LCDsend4bit
-		LCDsendSymb
-			LCDsend
-				LCDsend4bit
-	timer0Step
+		LCDsendMsg
+			LCDclear
+				LCDSendCom
+					LCDsend
+						LCDsend4bit
+			LCDsendData
+				LCDsendSymb
+					LCDsend
+						LCDsend4bit
+		Mul_16x16

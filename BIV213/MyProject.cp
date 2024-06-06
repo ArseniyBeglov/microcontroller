@@ -1,4 +1,4 @@
-#line 1 "C:/Users/digod/Documents/microcontroller/BIV213/MyProject.c"
+#line 1 "C:/Users/hp/Desktop/microcontroller/BIV213/MyProject.c"
 
 
 
@@ -27,7 +27,7 @@ char endMsg[] = "Timer ended";
 
 int number1 = 0;
 int number2 = 999;
-int timerStep = 1;
+int timerStep = 1000;
 int timerVal;
 char timerValRank;
 char num1Symb[4];
@@ -69,7 +69,7 @@ void LCDclear()
 
 void LCDsendSymb(char symbol)
 {
-#line 74 "C:/Users/digod/Documents/microcontroller/BIV213/MyProject.c"
+#line 74 "C:/Users/hp/Desktop/microcontroller/BIV213/MyProject.c"
  comFlag = 0;
  LCDsend(symbol);
 }
@@ -305,15 +305,5 @@ void main() {
  LCDstart();
 
  UART1start();
- timerVal = number1;
- numToSymb(number1, num1Symb);
- numToSymb(number2, num2Symb);
- numToSymb(timerStep, timerStepSymb);
- numToSymb(timerVal, timerValSymb);
- LCDSendTimerStart();
- timer0Init();
- for(;timerVal<=number2;timerVal++){
- LCDSendTimerValue(timerVal);
- timer0Step();
- }
+ number2 = insertUART(3);
  }
